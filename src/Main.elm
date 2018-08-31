@@ -7,7 +7,6 @@ import Http
 import Json.Decode as Decode
 import Task
 import Time
-import Url.Builder as Url
 
 
 
@@ -33,7 +32,7 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model Time.utc (Time.millisToPosix 0) [ "Hello World" ], Task.perform AdjustTimeZone Time.here )
+    ( Model Time.utc (Time.millisToPosix 0) [ "Hello World" ], Cmd.none )
 
 
 fileDecoder : Decode.Decoder (List String)
@@ -46,24 +45,14 @@ fileDecoder =
 
 
 type Msg
-    = RefreshFiles
-    | FilesRefreshed (Result Http.Error (List String))
-    | AdjustTimeZone Time.Zone
-    | Tick Time.Posix
+    = FilesRefreshed (Result Http.Error (List String))
+    | RefreshFiles Time.Posix
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        RefreshFiles ->
-            ( model, Cmd.none )
-
-        AdjustTimeZone newZone ->
-            ( { model | zone = newZone }
-            , Cmd.none
-            )
-
-        Tick newTime ->
+        RefreshFiles newTime ->
             ( { model | time = newTime }
             , refreshFiles
             )
@@ -102,7 +91,7 @@ refreshFiles =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every 1000 Tick
+    Time.every 1000 RefreshFiles
 
 
 
