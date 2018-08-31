@@ -70,14 +70,14 @@ update msg model =
                         Http.NetworkError ->
                             ( { model | content = [ "Network Error" ] }, Cmd.none )
 
-                        Http.BadStatus pl ->
-                            ( { model | content = [ "PL" ] }, Cmd.none )
+                        Http.BadStatus response ->
+                            ( { model | content = [ "Bad Status" ] }, Cmd.none )
 
-                        Http.BadPayload s s2 ->
-                            ( { model | content = [ s2.body ] }, Cmd.none )
+                        Http.BadPayload error response ->
+                            ( { model | content = [ response.body ] }, Cmd.none )
 
                         Http.BadUrl _ ->
-                            ( { model | content = [ "URL" ] }, Cmd.none )
+                            ( { model | content = [ "Bad URL" ] }, Cmd.none )
 
 
 
