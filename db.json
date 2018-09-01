@@ -1,7 +1,7 @@
 {
     "files": [
-        {"filename": "CoolFile3.png"},
-        {"filename": "CoolFile4.png"},
-        {"filename": "CoolFile5.png"}
+        {"filename": "TestFileOne.jpg"},
+        {"filename": "TestFileTwo.jpg"},
+        {"filename": "TestFileThree.jpg"}
     ]
 }

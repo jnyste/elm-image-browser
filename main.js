@@ -4513,10 +4513,12 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Main$Model = F3(
-	function (zone, time, content) {
-		return {content: content, time: time, zone: zone};
-	});
+var author$project$Main$File = function (filename) {
+	return {filename: filename};
+};
+var author$project$Main$Model = function (content) {
+	return {content: content};
+};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -4994,26 +4996,13 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
-var elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var elm$time$Time$millisToPosix = elm$time$Time$Posix;
-var elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var elm$time$Time$utc = A2(elm$time$Time$Zone, 0, _List_Nil);
 var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
-		A3(
-			author$project$Main$Model,
-			elm$time$Time$utc,
-			elm$time$Time$millisToPosix(0),
+		author$project$Main$Model(
 			_List_fromArray(
-				['Hello World'])),
+				[
+					author$project$Main$File('asd.jpg')
+				])),
 		elm$core$Platform$Cmd$none);
 };
 var author$project$Main$RefreshFiles = function (a) {
@@ -5289,6 +5278,10 @@ var elm$time$Time$Name = function (a) {
 var elm$time$Time$Offset = function (a) {
 	return {$: 'Offset', a: a};
 };
+var elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
 var elm$time$Time$customZone = elm$time$Time$Zone;
 var elm$time$Time$setInterval = _Time_setInterval;
 var elm$time$Time$spawnHelp = F3(
@@ -5471,6 +5464,13 @@ var elm$core$Task$sequence = function (tasks) {
 		elm$core$Task$succeed(_List_Nil),
 		tasks);
 };
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
+var elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var elm$time$Time$millisToPosix = elm$time$Time$Posix;
 var elm$time$Time$now = _Time_now(elm$time$Time$millisToPosix);
 var elm$time$Time$onSelfMsg = F3(
 	function (router, interval, state) {
@@ -5527,12 +5527,14 @@ var author$project$Main$FilesRefreshed = function (a) {
 	return {$: 'FilesRefreshed', a: a};
 };
 var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$list = _Json_decodeList;
+var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$Main$fileDecoder = A2(
-	elm$json$Json$Decode$field,
-	'files',
-	elm$json$Json$Decode$list(elm$json$Json$Decode$string));
+	elm$json$Json$Decode$map,
+	author$project$Main$File,
+	A2(elm$json$Json$Decode$field, 'filename', elm$json$Json$Decode$string));
+var elm$json$Json$Decode$list = _Json_decodeList;
+var author$project$Main$fileListDecoder = elm$json$Json$Decode$list(author$project$Main$fileDecoder);
 var elm$http$Http$Internal$EmptyBody = {$: 'EmptyBody'};
 var elm$http$Http$emptyBody = elm$http$Http$Internal$EmptyBody;
 var elm$core$Dict$getMin = function (dict) {
@@ -6062,84 +6064,69 @@ var elm$http$Http$send = F2(
 var author$project$Main$refreshFiles = A2(
 	elm$http$Http$send,
 	author$project$Main$FilesRefreshed,
-	A2(elm$http$Http$get, 'http://37.139.3.80:3000/files', author$project$Main$fileDecoder));
+	A2(elm$http$Http$get, 'http://37.139.3.80:3000/files', author$project$Main$fileListDecoder));
 var author$project$Main$update = F2(
 	function (msg, model) {
 		if (msg.$ === 'RefreshFiles') {
 			var newTime = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{time: newTime}),
-				author$project$Main$refreshFiles);
+			return _Utils_Tuple2(model, author$project$Main$refreshFiles);
 		} else {
 			var result = msg.a;
 			if (result.$ === 'Ok') {
 				var files = result.a;
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{content: files}),
+					author$project$Main$Model(files),
 					elm$core$Platform$Cmd$none);
 			} else {
 				var error = result.a;
 				switch (error.$) {
 					case 'Timeout':
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									content: _List_fromArray(
-										['Timeout'])
-								}),
+							author$project$Main$Model(
+								_List_fromArray(
+									[
+										author$project$Main$File('Timeout')
+									])),
 							elm$core$Platform$Cmd$none);
 					case 'NetworkError':
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									content: _List_fromArray(
-										['Network Error'])
-								}),
+							author$project$Main$Model(
+								_List_fromArray(
+									[
+										author$project$Main$File('Network Error')
+									])),
 							elm$core$Platform$Cmd$none);
 					case 'BadStatus':
-						var pl = error.a;
+						var response = error.a;
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									content: _List_fromArray(
-										['PL'])
-								}),
+							author$project$Main$Model(
+								_List_fromArray(
+									[
+										author$project$Main$File('Bad Status')
+									])),
 							elm$core$Platform$Cmd$none);
 					case 'BadPayload':
-						var s = error.a;
-						var s2 = error.b;
+						var payloadError = error.a;
+						var response = error.b;
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									content: _List_fromArray(
-										[s2.body])
-								}),
+							author$project$Main$Model(
+								_List_fromArray(
+									[
+										author$project$Main$File(response.body)
+									])),
 							elm$core$Platform$Cmd$none);
 					default:
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									content: _List_fromArray(
-										['URL'])
-								}),
+							author$project$Main$Model(
+								_List_fromArray(
+									[
+										author$project$Main$File('Bad URL')
+									])),
 							elm$core$Platform$Cmd$none);
 				}
 			}
 		}
 	});
-var elm$core$String$concat = function (strings) {
-	return A2(elm$core$String$join, '', strings);
-};
-var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
@@ -6155,7 +6142,6 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	}
 };
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var author$project$Main$view = function (model) {
@@ -6164,14 +6150,9 @@ var author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				elm$html$Html$h1,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text(
-						elm$core$String$concat(model.content))
-					]))
+				elm$html$Html$text(
+				elm$core$String$fromInt(
+					elm$core$List$length(model.content)))
 			]));
 };
 var elm$browser$Browser$External = function (a) {
