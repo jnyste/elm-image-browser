@@ -56,7 +56,7 @@ fileDecoder =
 
 fetchFiles : Cmd Msg
 fetchFiles =
-    Http.send FilesFetched (Http.get "http://37.139.3.80/elm-image-browser/db.json" fileListDecoder)
+    Http.send FilesFetched (Http.get "http://37.139.3.80:3000/files" fileListDecoder)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

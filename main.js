@@ -5787,7 +5787,7 @@ var elm$http$Http$send = F2(
 var author$project$Main$fetchFiles = A2(
 	elm$http$Http$send,
 	author$project$Main$FilesFetched,
-	A2(elm$http$Http$get, 'http://37.139.3.80/elm-image-browser/db.json', author$project$Main$fileListDecoder));
+	A2(elm$http$Http$get, 'http://37.139.3.80:3000/files', author$project$Main$fileListDecoder));
 var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
 		author$project$Main$Model(_List_Nil),
