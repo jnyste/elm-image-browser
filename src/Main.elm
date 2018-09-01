@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (..)
+import Html.Attributes exposing (class, src)
 import Http
 import Json.Decode as Decoder exposing (Decoder, at, field, int, list, string)
 import Time
@@ -92,7 +93,7 @@ subscriptions model =
 
 toHtmlList : List File -> Html msg
 toHtmlList files =
-    div [] (List.map (\l -> h1 [] [ text l.filename ]) files)
+    div [] (List.map (\l -> img [ class "image", src ("images/" ++ l.filename) ] []) files)
 
 
 view : Model -> Html Msg

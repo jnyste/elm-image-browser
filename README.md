@@ -1,2 +1,2 @@
 # elm-image-browser
-Simple image browser in Elm
+Image browser in Elm
