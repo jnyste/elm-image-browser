@@ -79,4 +79,3 @@ typings/
 .serverless
 
 # Stop github from misreporting language
-main.js
