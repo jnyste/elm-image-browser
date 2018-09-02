@@ -98,4 +98,4 @@ toHtmlList files =
 
 view : Model -> Html Msg
 view model =
-    div [] [ toHtmlList model.files ]
+    toHtmlList model.files
