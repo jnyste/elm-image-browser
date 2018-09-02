@@ -1,5 +1,5 @@
 # elm-image-browser
-## Image browser in Elm (backend in Express). Automatically polls new or deleted files from a JSON endpoint.
+## Image browser running on Elm and Express. Automatically gets new images from the server.
 # [Online Demo](http://koti.tamk.fi/~c7jnyste/image-viewer/)
 
 
